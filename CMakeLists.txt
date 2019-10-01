@@ -16,6 +16,7 @@ SET(TARGET "sad2D")
 # in the "CMake in user projects" page accessible from the "User info"
 # page of the documentation.
 SET(TARGET_SRC
+  adv_diff.cc
   main.cc
 )
 
