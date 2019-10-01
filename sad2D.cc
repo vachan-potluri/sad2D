@@ -84,7 +84,6 @@ void sad2D::set_IC()
  * @f$y=0@f$ forms boundary 1 with @f$\phi@f$ value prescribed as @f$0@f$<br/>
  * @f$x=1 \bigcup y=1@f$ forms boundary 2 with zero gradient
  * @note Ghost cell approach will be used
- * @todo Check this function
  */
 void sad2D::set_boundary_ids()
 {

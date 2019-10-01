@@ -47,6 +47,10 @@
 /**
  * @class sad2D
  * @brief A class for solvin scalar advection diffusion equations in 2D
+ * 
+ * @todo Documentation for sad2D
+ * @todo A function for calculating stable time step
+ * @todo Functions sad2D::assemble_system() and sad2D::update
  */
 class sad2D
 {
