@@ -1,0 +1,6 @@
+# Ignore everything
+/*
+# except ...
+!.gitignore
+!Doxyfile
+!main_Page.txt
