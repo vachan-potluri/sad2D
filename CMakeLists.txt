@@ -19,6 +19,7 @@ SET(TARGET_SRC
   adv_diff.cc
   IC.cc
   BCs.cc
+  sad2D.cc
   main.cc
 )
 
