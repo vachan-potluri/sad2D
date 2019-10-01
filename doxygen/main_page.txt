@@ -1,0 +1,4 @@
+/**
+@mainpage
+Hi! This is the main page.
+ */
