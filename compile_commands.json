@@ -6,6 +6,11 @@
 },
 {
   "directory": "/home/vachan/Documents/Work/sad2D",
+  "command": "/usr/bin/c++  -DBOOST_NO_AUTO_PTR -DDEBUG -DTBB_DO_ASSERT=1 -DTBB_USE_DEBUG -isystem /home/vachan/bin/dealii/include -isystem /home/vachan/bin/dealii/include/deal.II/bundled -isystem /usr/local/include -isystem /home/vachan/petsc-3.11.1/include -isystem /home/vachan/petsc-3.11.1/arch-linux2-c-debug/include    -pedantic -fPIC -Wall -Wextra -Woverloaded-virtual -Wpointer-arith -Wsign-compare -Wswitch -Wsynth -Wwrite-strings -Wno-placement-new -Wno-literal-suffix -Wno-psabi -fopenmp-simd -std=c++17 -pthread -Wno-parentheses -Wno-unused-local-typedefs -O0 -ggdb -Wa,--compress-debug-sections -o CMakeFiles/sad2D.dir/IC.cc.o -c /home/vachan/Documents/Work/sad2D/IC.cc",
+  "file": "/home/vachan/Documents/Work/sad2D/IC.cc"
+},
+{
+  "directory": "/home/vachan/Documents/Work/sad2D",
   "command": "/usr/bin/c++  -DBOOST_NO_AUTO_PTR -DDEBUG -DTBB_DO_ASSERT=1 -DTBB_USE_DEBUG -isystem /home/vachan/bin/dealii/include -isystem /home/vachan/bin/dealii/include/deal.II/bundled -isystem /usr/local/include -isystem /home/vachan/petsc-3.11.1/include -isystem /home/vachan/petsc-3.11.1/arch-linux2-c-debug/include    -pedantic -fPIC -Wall -Wextra -Woverloaded-virtual -Wpointer-arith -Wsign-compare -Wswitch -Wsynth -Wwrite-strings -Wno-placement-new -Wno-literal-suffix -Wno-psabi -fopenmp-simd -std=c++17 -pthread -Wno-parentheses -Wno-unused-local-typedefs -O0 -ggdb -Wa,--compress-debug-sections -o CMakeFiles/sad2D.dir/main.cc.o -c /home/vachan/Documents/Work/sad2D/main.cc",
   "file": "/home/vachan/Documents/Work/sad2D/main.cc"
 }

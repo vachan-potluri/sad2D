@@ -17,6 +17,7 @@ SET(TARGET "sad2D")
 # page of the documentation.
 SET(TARGET_SRC
   adv_diff.cc
+  IC.cc
   main.cc
 )
 
