@@ -1,0 +1,12 @@
+Makefile
+CMakeCache.txt
+cmake_install.cmake
+
+.project
+.cproject
+
+# executable
+sad2D
+
+# result files
+*.vtk*
