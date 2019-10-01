@@ -65,3 +65,40 @@ void sad2D::setup_system()
         l_rhs.resize(triang.n_active_cells());
         for(auto &cur_rhs: l_rhs) cur_rhs.reinit(fe.dofs_per_cell);
 }
+
+/**
+ * @brief Sets initial condition
+ * 
+ * Since nodal basis is being used, initial condition is easy to set. interpolate function of
+ * VectorTools namespace is used with IC class and sad2D::g_solution. See IC::value()
+ */
+void sad2D::set_IC()
+{
+        VectorTools::interpolate(dof_handler, IC(), g_solution);
+}
+
+/**
+ * @brief Boundary ids are set here
+ * 
+ * @f$x=0@f$ forms boundary 0 with @f$\phi@f$ value prescribed as @f$1@f$<br/>
+ * @f$y=0@f$ forms boundary 1 with @f$\phi@f$ value prescribed as @f$0@f$<br/>
+ * @f$x=1 \bigcup y=1@f$ forms boundary 2 with zero gradient
+ * @note Ghost cell approach will be used
+ * @todo Check this function
+ */
+void sad2D::set_boundary_ids()
+{
+        for(auto &cell: dof_handler.active_cell_iterators()){
+                for(uint face_id=0; face_id<GeometryInfo<2>::faces_per_cell; face_id++){
+                        if(cell->face(face_id)->at_boundary()){
+                                Point<2> fcenter = cell->face(face_id)->center(); // face center
+                                if(fabs(fcenter(0)) < 1e-6)
+                                        cell->face(face_id)->set_boundary_id(0);
+                                else if(fabs(fcenter(1)) < 1e-6)
+                                        cell->face(face_id)->set_boundary_id(1);
+                                else
+                                        cell->face(face_id)->set_boundary_id(2);
+                        }
+                } // loop over faces
+        } // loop over cells
+}
