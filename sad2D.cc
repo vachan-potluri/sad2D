@@ -102,3 +102,18 @@ void sad2D::set_boundary_ids()
                 } // loop over faces
         } // loop over cells
 }
+
+/**
+ * @brief Outputs the global solution in vtk format taking the filename as argument
+ */
+void sad2D::output(const std::string &filename) const
+{
+        DataOut<2> data_out;
+        data_out.attach_dof_handler(dof_handler);
+        data_out.add_data_vector(g_solution, "phi");
+
+        data_out.build_patches();
+
+        std::ofstream ofile(filename);
+        data_out.write_vtk(ofile);
+}
