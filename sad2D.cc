@@ -19,7 +19,7 @@
  * Eg: for order=2, on 1-th face, the first cell dof is 2 and the next dof is obtained after
  * increment of 3
  */
-advection2D::advection2D(const uint order)
+sad2D::sad2D(const uint order)
 : mapping(), fe(order), fe_face(order), dof_handler(triang),
         face_first_dof{0, order, 0, (order+1)*order},
         face_dof_increment{order+1, order+1, 1, 1}
