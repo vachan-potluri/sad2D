@@ -1,0 +1,25 @@
+{
+        "env": {
+          "myDefaultIncludePath": ["${workspaceFolder}"],
+          "myCompilerPath": "/usr/local/bin/g++-7"
+        },
+        "configurations": [
+          {
+            "name": "Linux",
+            "intelliSenseMode": "gcc-x64",
+            "includePath": ["${myDefaultIncludePath}", "/home/vachan/dealii-9.1.1/include"],
+            "defines": [],
+            "forcedInclude": [],
+            "compilerPath": "/usr/bin/g++",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compileCommands": "${workspaceFolder}/compile_commands.json",
+            "browse": {
+              "path": ["${workspaceFolder}"],
+              "limitSymbolsToIncludedHeaders": true,
+              "databaseFilename": ""
+            }
+          }
+        ],
+        "version": 4
+      }
