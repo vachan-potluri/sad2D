@@ -10,7 +10,7 @@
  * 
  * sad2D::mapping, sad2D::fe and sad2D::fe_face are initialised.
  * sad2D::dof_handler is associated to sad2D::triang.
- * Based on order, face_first_dof and face_dof_increment containers are set here. See
+ * Based on order, sad2D::face_first_dof and sad2D::face_dof_increment containers are set here. See
  * https://www.dealii.org/current/doxygen/deal.II/structGeometryInfo.html and
  * https://www.dealii.org/current/doxygen/deal.II/classFE__DGQ.html for face and dof ordering
  * respectively in a cell. According to GeometryInfo, the direction of face lines is along the
@@ -69,6 +69,89 @@ void sad2D::setup_system()
         // also set
         l_rhs.resize(triang.n_active_cells());
         for(auto &cur_rhs: l_rhs) cur_rhs.reinit(fe.dofs_per_cell);
+}
+
+/**
+ * @brief Assembles matrices for all cells
+ */
+void sad2D::assemble_system()
+{
+        deallog << "Assembling system ... " << std::flush;
+        // allocate all local matrices
+        FullMatrix<double> l_mass(fe.dofs_per_cell),
+                l_mass_inv(fe.dofs_per_cell),
+                l_diff(fe.dofs_per_cell),
+                l_lap(fe.dofs_per_cell),
+                l_dflux(fe.dofs_per_cell),
+                l_aflux(fe.dofs_per_cell),
+                temp(fe.dofs_per_cell); // initialise with square matrix size
+        QGauss<2> cell_quad_formula(fe.degree+1); // (N+1) gauss quad for cell
+        QGauss<1> face_quad_formula(fe.degree+1); // for face
+        FEValues<2> fe_values(fe, cell_quad_formula,
+                update_values | update_gradients | update_JxW_values | update_quadrature_points);
+        FEFaceValues<2> fe_face_values(fe, face_quad_formula,
+                update_values | update_gradients | update_JxW_values | update_quadrature_points
+                | update_normal_vectors);
+        
+        uint i, j, i_face, j_face, qid, face_id;
+        // compute mass and diff matrices
+        for(auto &cell: dof_handler.active_cell_iterators()){
+                fe_values.reinit(cell);
+                l_mass = 0;
+                l_diff = 0;
+                l_lap = 0;
+                for(qid=0; qid<fe_values.n_quadrature_points; qid++){
+                        for(i=0; i<fe.dofs_per_cell; i++){
+                                for(j=0; j<fe.dofs_per_cell; j++){
+                                        l_mass(i,j) += fe_values.shape_value(i, qid) *
+                                                fe_values.shape_value(j, qid) *
+                                                fe_values.JxW(qid);
+                                        l_diff(i,j) += fe_values.shape_grad(i, qid) *
+                                                adv_diff::wind(fe_values.quadrature_point(qid)) *
+                                                fe_values.shape_value(j, qid) *
+                                                fe_values.JxW(qid);
+                                        l_lap(i,j) += fe_values.shape_grad(i, qid) *
+                                                fe_values.shape_grad(j, qid) *
+                                                fe_values.JxW(qid);
+                                } // inner loop cell shape fns
+                        } // outer loop cell shape fns
+                } // loop over cell quad points
+                l_mass_inv.invert(l_mass);
+                l_mass_inv.mmult(temp, l_diff); // store mass_inv * diff into temp
+                stiff_mats[cell->index()] = temp;
+
+                // each face will have separate flux matrices
+                for(face_id=0; face_id<GeometryInfo<2>::faces_per_cell; face_id++){
+                        fe_face_values.reinit(cell, face_id);
+                        l_aflux = 0;
+                        l_dflux = 0;
+                        for(qid=0; qid<fe_face_values.n_quadrature_points; qid++){
+                                for(i_face=0; i_face<fe_face.dofs_per_face; i_face++){
+                                        for(j_face=0; j_face<fe_face.dofs_per_face; j_face++){
+                                                // mapping
+                                                i = face_first_dof[face_id] +
+                                                        i_face*face_dof_increment[face_id];
+                                                j = face_first_dof[face_id] +
+                                                        j_face*face_dof_increment[face_id];
+                                                l_aflux(i,j) +=
+                                                        fe_face_values.shape_value(i, qid) *
+                                                        fe_face_values.shape_value(j, qid) *
+                                                        fe_face_values.JxW(qid);
+                                                l_dflux(i,j) +=
+                                                        fe_face_values.shape_grad(j, qid) *
+                                                        fe_face_values.normal_vector(qid) *
+                                                        fe_face_values.shape_value(i,qid) *
+                                                        fe_face_values.JxW(qid);
+                                        } // inner loop over face shape fns
+                                } // outer loop over face shape fns
+                        } // loop over face quad points
+                        l_mass_inv.mmult(temp, l_aflux);
+                        alift_mats[cell->index()][face_id] = temp;
+                        l_mass_inv.mmult(temp, l_dflux);
+                        dlift_mats[cell->index()][face_id] = temp;
+                }// loop over faces
+        } // loop over cells
+        deallog << "Completed assembly" << std::endl;
 }
 
 /**
