@@ -31,8 +31,7 @@ sad2D::sad2D(const uint order)
  * 1. Mesh is setup and stored in sad2D::triang
  * 2. sad2D::dof_handler is linked to sad2D::fe
  * 3. sad2D::g_solution and sad2D::l_rhs sizes are set
- * 4. Sizes of sad2D::stiff_mats, sad2D::lift_mats and sad2D::l_rhs containers are
- * set
+ * 4. Sizes of all matrices and rhs
  */
 void sad2D::setup_system()
 {
@@ -59,9 +58,15 @@ void sad2D::setup_system()
         // } // loop over cells
 
         // set sizes of stiffness and lifting matrix containers
+        // reinit is not required for matrix containers because their elements are directly equated
+        // to matrices
         stiff_mats.resize(triang.n_active_cells());
-        lift_mats.resize(triang.n_active_cells());
+        alift_mats.resize(triang.n_active_cells());
+        dlift_mats.resize(triang.n_active_cells());
+        damp_mats.resize(triang.n_active_cells());
 
+        // since rhs elements are subjected to addition, the size of elements of rhs container is
+        // also set
         l_rhs.resize(triang.n_active_cells());
         for(auto &cur_rhs: l_rhs) cur_rhs.reinit(fe.dofs_per_cell);
 }

@@ -47,10 +47,46 @@
 
 /**
  * @class sad2D
- * @brief A class for solvin scalar advection diffusion equations in 2D
+ * @brief A class for solving scalar advection diffusion equations in 2D
  * 
- * @todo Documentation for sad2D
- * @todo A function for calculating stable time step
+ * The advection diffusion equation is solved
+ * @f[
+ * \frac{\partial \phi}{\partial t} + \nabla \cdot (\phi \vec{v}) = \nu\nabla^2\phi
+ * @f]
+ * The DG formulation would be
+ * @f[
+ * \int_{\Omega_h} l_i \left(\sum \frac{\partial\phi_j}{\partial t} l_j\right) \,d\Omega +
+ * \sum_{\text{faces}} \int_{\text{face}} l_i \left(\sum\phi^*_j l_j\right)
+ * \vec{v}\cdot\vec{n}\,dA -
+ * \int_{\Omega_h}\nabla l_i\cdot\vec{v} \left(\sum\phi_j l_j\right) \,d\Omega =
+ * \sum_{\text{faces}} \int_{\text{face}} l_i \left(\sum\overline{\phi}_j\nabla l_j\right)
+ * \cdot \vec{n}\,dA -
+ * \int_{\Omega_h} \nabla l_i \cdot \left(\sum \phi_j\nabla l_j\right)\,d\Omega
+ * @f]
+ * where @f$\phi^*_j\vec{v}\cdot\vec{n} \equiv f^*_j@f$ is the normal advective numerical flux and
+ * @f$\overline{\phi}_j@f$ is the average of owner and neighbor values at a face dof.
+ * 
+ * With explicit time integration, we get
+ * @f[
+ * [M]\{\phi\}^{n+1} = [M]\{\phi\}^n + \Delta t \left[
+ * [D]\{\phi\}^n - \sum_{\text{faces}}[F_a]\{f^*\}^n +
+ * \sum_{\text{faces}}[F_d]\{\overline{\phi}\}^n - [L]\{\phi\}^n
+ * \right]
+ * @f]
+ * where @f$[M]@f$ is the mass matrix, @f$[D]@f$ is the differentiation matrix, @f$[L]@f$ is the
+ * Laplacian matrix, @f$[F_a]@f$ is the advective flux matrix and @f$[F_d]@f$ is the diffusive flux
+ * matrix.
+ * 
+ * Multiplying with mass inverse on both sides, we get
+ * @f[
+ * \{\phi\}^{n+1} = \{\phi\}^n + \left[
+ * [S]\{\phi\}^n - \sum_{\text{faces}}[L_a]\{f^*\}^n +
+ * \sum_{\text{faces}}[L_d]\{\overline{\phi}\}^n - [A]\{\phi\}^n
+ * \right]
+ * @f]
+ * where @f$[S]@f$ is the stiffness matrix, @f$[L_a]@f$ is the advective lifting matrix, @f$[L_d]@f$ is
+ * the diffusive lifting matrix and @f$[A]@f$ is the damping matrix.
+ * 
  * @todo Functions sad2D::assemble_system() and sad2D::update
  */
 class sad2D
@@ -93,9 +129,11 @@ class sad2D
         Vector<double> gold_solution; // global old solution
         std::vector<Vector<double>> l_rhs; // local rhs of every cell
 
-        // stiffness and lifting matrices
+        // stiffness, (advection and diffusion) lifting and damping matrices
         std::vector<FullMatrix<double>> stiff_mats;
-        std::vector< std::array<FullMatrix<double>, GeometryInfo<2>::faces_per_cell> > lift_mats;
+        std::vector< std::array<FullMatrix<double>, GeometryInfo<2>::faces_per_cell> > alift_mats;
+        std::vector< std::array<FullMatrix<double>, GeometryInfo<2>::faces_per_cell> > dlift_mats;
+        std::vector<FullMatrix<double>> damp_mats;
 
 
 
