@@ -311,7 +311,7 @@ void sad2D::update(const double time_step)
                                         cur_anormal_flux = adv_diff::rusanov_aflux(phi,
                                                 phi_neighbor, normal, dof_loc);
                                         neg_anormal_flux(l_dof_id) = -cur_anormal_flux;
-                                        cur_dvalue = 0.5*(phi+phi_neighbor);
+                                        cur_dvalue = phi_neighbor;
                                         dvalues(l_dof_id) = cur_dvalue;
                                 } // loop over face dofs
 
@@ -353,7 +353,7 @@ void sad2D::update(const double time_step)
 
                                         cur_anormal_flux = adv_diff::rusanov_aflux(phi,
                                                 phi_neighbor, normal, dof_loc);
-                                        cur_dvalue = 0.5*(phi+phi_neighbor);
+                                        cur_dvalue = phi_neighbor;
                                         neg_anormal_flux(l_dof_id) = -cur_anormal_flux;
                                         neg_anormal_flux_neighbor(l_dof_id_neighbor) = cur_anormal_flux;
                                         dvalues(l_dof_id) = cur_dvalue;
