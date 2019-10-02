@@ -444,5 +444,18 @@ void sad2D::test()
         problem.print_matrices();
         problem.set_IC();
         problem.set_boundary_ids();
+
+        double start_time = 0.0, end_time = 0.1, time_step = 0.0;
+        uint time_counter = 0;
+        std::string base_filename = "output.vtk";
+        problem.output(base_filename + ".0"); // initial condition
+        for(double cur_time = start_time; cur_time<end_time; cur_time+=time_step){
+                time_step = problem.calc_time_step(0.5);
+                deallog << "Step " << time_counter << " time " << cur_time << " time step "
+                << time_step << std::endl;
+                problem.update(time_step);
+                time_counter++;
+                problem.output(base_filename + "." + std::to_string(time_counter));
+        }
 }
 #endif
