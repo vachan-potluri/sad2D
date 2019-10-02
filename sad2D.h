@@ -87,7 +87,9 @@
  * where @f$[S]@f$ is the stiffness matrix, @f$[L_a]@f$ is the advective lifting matrix, @f$[L_d]@f$ is
  * the diffusive lifting matrix and @f$[A]@f$ is the damping matrix.
  * 
- * @todo Functions sad2D::assemble_system() and sad2D::update
+ * @remark The solution is blowing-up
+ * @todo Check whether ghost cell like approach would work for diffusive problems. If not, then the
+ * BC has to be enforced strongly
  */
 class sad2D
 {
