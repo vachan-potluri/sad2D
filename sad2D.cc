@@ -202,7 +202,7 @@ void sad2D::set_boundary_ids()
  */
 double sad2D::calc_time_step(const double co) const
 {
-        double min=0.0, cur, radius;
+        double min=1e6, cur, radius;
         Tensor<1,2> cur_wind;
         for(auto &cell: dof_handler.active_cell_iterators()){
                 radius = 0.5*cell->diameter();
