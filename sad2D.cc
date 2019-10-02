@@ -216,6 +216,25 @@ double sad2D::calc_time_step(const double co) const
 }
 
 /**
+ * @brief Prints stifness, damping and the 8 lifting matrices of 0-th element
+ */
+void sad2D::print_matrices() const
+{
+        deallog << "Stiffness matrix" << std::endl;
+        stiff_mats[0].print(deallog, 10, 2);
+        deallog << "Damping matrix" << std::endl;
+        damp_mats[0].print(deallog, 10, 2);
+        for(uint i=0; i<GeometryInfo<2>::faces_per_cell; i++){
+                deallog << "Advection lifting matrix, face " << i << std::endl;
+                alift_mats[0][i].print(deallog, 15, 4);
+        }
+        for(uint i=0; i<GeometryInfo<2>::faces_per_cell; i++){
+                deallog << "Diffusion lifting matrix, face " << i << std::endl;
+                dlift_mats[0][i].print(deallog, 15, 4);
+        }
+}
+
+/**
  * @brief Outputs the global solution in vtk format taking the filename as argument
  */
 void sad2D::output(const std::string &filename) const
@@ -229,3 +248,23 @@ void sad2D::output(const std::string &filename) const
         std::ofstream ofile(filename);
         data_out.write_vtk(ofile);
 }
+
+
+
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+// Test function
+// # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#ifdef DEBUG
+void sad2D::test()
+{
+        deallog << "---------------------------------------------" << std::endl;
+        deallog << "Testing advection2D class" << std::endl;
+        deallog << "---------------------------------------------" << std::endl;
+        sad2D problem(1);
+        problem.setup_system();
+        problem.assemble_system();
+        problem.print_matrices();
+        problem.set_IC();
+        problem.set_boundary_ids();
+}
+#endif
