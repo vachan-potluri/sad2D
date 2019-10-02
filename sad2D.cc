@@ -107,7 +107,7 @@ void sad2D::set_boundary_ids()
  * 
  * If @f$r@f$ is the "radius" of the cell, then
  * @f[
- * \Delta t = \text{Co}\,\min\left[ \frac{r^2}{\alpha}, \frac{r}{u}, \frac{r}{v} \right]
+ * \Delta t = \text{Co}\frac{1}{2N+1}\min\left[ \frac{r^2}{\alpha}, \frac{r}{u}, \frac{r}{v} \right]
  * @f]
  */
 double sad2D::calc_time_step(const double co) const
@@ -124,7 +124,7 @@ double sad2D::calc_time_step(const double co) const
                 });
                 if(cur < min) min = cur;
         }
-        return co*min;
+        return co*min/(2*fe.degree + 1);
 }
 
 /**
