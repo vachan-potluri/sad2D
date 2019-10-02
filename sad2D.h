@@ -33,6 +33,7 @@
 
 #include <fstream>
 #include <functional>
+#include <algorithm>
 
 // #include <deal.II/numerics/derivative_approximation.h> // for adaptive mesh
 
@@ -70,6 +71,7 @@ class sad2D
         void assemble_system();
         void set_IC();
         void set_boundary_ids();
+        double calc_time_step(const double co) const;
         void update(const double time_step);
         void print_matrices() const;
         void output(const std::string &filename) const;

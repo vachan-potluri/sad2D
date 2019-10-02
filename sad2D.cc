@@ -103,6 +103,31 @@ void sad2D::set_boundary_ids()
 }
 
 /**
+ * @brief Calculates stable time step based on the Courant number @p co
+ * 
+ * If @f$r@f$ is the "radius" of the cell, then
+ * @f[
+ * \Delta t = \text{Co}\,\min\left[ \frac{r^2}{\alpha}, \frac{r}{u}, \frac{r}{v} \right]
+ * @f]
+ */
+double sad2D::calc_time_step(const double co) const
+{
+        double min=0.0, cur, radius;
+        Tensor<1,2> cur_wind;
+        for(auto &cell: dof_handler.active_cell_iterators()){
+                radius = 0.5*cell->diameter();
+                cur_wind = adv_diff::wind(cell->center());
+                cur = std::min({
+                        radius*radius/adv_diff::nu,
+                        radius/(cur_wind[0]+1e-6),
+                        radius/(cur_wind[1]+1e-6),
+                });
+                if(cur < min) min = cur;
+        }
+        return co*min;
+}
+
+/**
  * @brief Outputs the global solution in vtk format taking the filename as argument
  */
 void sad2D::output(const std::string &filename) const
