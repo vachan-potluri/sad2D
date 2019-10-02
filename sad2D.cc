@@ -119,6 +119,8 @@ void sad2D::assemble_system()
                 l_mass_inv.invert(l_mass);
                 l_mass_inv.mmult(temp, l_diff); // store mass_inv * diff into temp
                 stiff_mats[cell->index()] = temp;
+                l_mass_inv.mmult(temp, l_lap);
+                damp_mats[cell->index()] = temp;
 
                 // each face will have separate flux matrices
                 for(face_id=0; face_id<GeometryInfo<2>::faces_per_cell; face_id++){
