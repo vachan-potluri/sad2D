@@ -12,7 +12,7 @@ Tensor<1,2> adv_diff::wind(const Point<2> &loc)
 {
         Tensor<1,2> w;
         w[0] = 1.0;
-        w[2] = 1.0;
+        w[1] = 1.0;
         w /= w.norm();
         return w;
 }
